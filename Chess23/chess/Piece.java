@@ -1,58 +1,18 @@
 package chess;
 
+import java.util.*;
+import java.io.*;
+
+/**
+@author Lance Luo
+*/
 public abstract class Piece {
-	String name;
-	private int xpos, ypos; //only to be used within class
+	public char color, type;
 	
-	Piece (String name, int xpos, int ypos) {
-		this.name = name;
-		this.xpos = xpos;
-		this.ypos = ypos;
+	Piece (char color, char type) {
+		this.color = color;
+		this.type = type;
 	}
 	
-	void checkDestination() {
-		//xpos and ypos will be used here
-	}
-	
-	void checkIfBlocked() {
-		//xpos and ypos will be used here
-	}
+	public abstract boolean validMove(Piece[][] board, int startCol, int startRow, int endCol, int endRow, int turn);
 }
-
-class Rook extends Piece { 
-	Rook(String name, int xpos, int ypos) {
-		super(name, xpos, ypos);
-	}
-}
-
-class Knight extends Piece{
-	Knight(String name, int xpos, int ypos) {
-		super(name, xpos, ypos);
-	}
-}
-
-class Bishop extends Piece{
-	Bishop(String name, int xpos, int ypos) {
-		super(name, xpos, ypos);
-	}
-}
-
-class Queen extends Piece{
-	Queen(String name, int xpos, int ypos) {
-		super(name, xpos, ypos);
-	}
-}
-
-class King extends Piece{
-	King(String name, int xpos, int ypos) {
-		super(name, xpos, ypos);
-	}
-}
-
-class Pawn extends Piece{
-	Pawn(String name, int xpos, int ypos) {
-		super(name, xpos, ypos);
-	}
-}
-
-
