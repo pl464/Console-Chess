@@ -11,7 +11,6 @@ public class Chess {
 	public static Piece[][] board = new Piece[8][8];
 
 	public static void initialize() {
-		
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 				if (i == 0) {
@@ -59,6 +58,7 @@ public class Chess {
 				}
 			}
 		}
+		
 	}
 
 	public static void printBoard() {
@@ -279,7 +279,8 @@ public class Chess {
 		for (int i = a; i <= b; i++) {
 			int[] position = searchInDirection(yPos, xPos, diagDirections[i], 1);
 			Piece p = board[position[0]][position[1]];
-			if (p != null && (p.type == 'P') && p.color != color) {
+
+			if (p != null && (p.type == 'p') && p.color != color) {
 				return true;
 			}
 		} 
@@ -468,7 +469,7 @@ public class Chess {
 					if (board[y][x] != null && board[y][x].color != p.color) 
 						possMoves.add(new int[] {y, x});
 				} 
-				if (x != 0) {
+				if (xPos != 0) {
 					x = xPos - 1; 
 					if (board[y][x] != null && board[y][x].color != p.color) 
 						possMoves.add(new int[] {y, x});
