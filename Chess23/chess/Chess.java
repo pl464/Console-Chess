@@ -11,6 +11,13 @@ public class Chess {
 	public static Piece[][] board = new Piece[8][8];
 
 	public static void initialize() {
+		board[1][2] = new Pawn('b', 'p');
+		board[3][0] = new King('w', 'K');
+		board[3][1] = new Pawn('w', 'p');
+		board[3][5] = new Rook('b', 'R');
+		board[7][7] = new King('b', 'K');
+		board[7][6] = new Pawn('w', 'p');
+		/*
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 				if (i == 0) {
@@ -57,7 +64,7 @@ public class Chess {
 					board[i][j] = null;
 				}
 			}
-		}
+		}*/
 		
 	}
 

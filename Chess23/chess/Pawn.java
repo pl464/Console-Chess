@@ -2,6 +2,7 @@ package chess;
 
 import java.util.*;
 import java.io.*;
+import chess.Chess;
 
 /**
 @author Lance Luo
@@ -37,6 +38,19 @@ public class Pawn extends Piece {
 			}
 			//en passant
 			else if (passing != null && passing.color != color && passing.type == 'p' && ((Pawn) board[startRow][endCol]).passant == (turn - 1)) {
+				//simulate an enpassant to see if it would place the king in check
+				board[startRow][startCol] = null;
+				board[startRow][endCol] = null;
+				board[endRow][endCol] = this;
+				if (Chess.isCheck(this.color)) {
+					board[startRow][startCol] = this;
+					board[startRow][endCol] = passing;
+					board[endRow][endCol] = null;
+					return false;
+				}
+				board[startRow][startCol] = this;
+				board[startRow][endCol] = passing;
+				board[endRow][endCol] = null;
 				return true;
 			}
 		}
