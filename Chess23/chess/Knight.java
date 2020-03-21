@@ -1,14 +1,12 @@
 package chess;
 
-import java.util.*;
-import java.io.*;
-
 /**
 @author Lance Luo
+@author Patrick Lee
 */
 public class Knight extends Piece {
-	Knight (char color, char type) {
-		super(color, type);
+	Knight (char color) {
+		super(color, 'N');
 	}
 	
 	public boolean validMove(Piece[][] board, int startCol, int startRow, int endCol, int endRow, int turn) {

@@ -1,10 +1,8 @@
 package chess;
 
-import java.util.*;
-import java.io.*;
-
 /**
 @author Lance Luo
+@author Patrick Lee
 */
 public abstract class Piece {
 	public char color, type;

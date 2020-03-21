@@ -1,73 +1,75 @@
 package chess;
 
 import java.util.*;
-import java.io.*;
 
 /**
 @author Lance Luo
+@author Patrick Lee
 */
 public class Chess {
 
+	/**
+	 * This is a 2D-array that acts as the "chess board".
+	 */
 	public static Piece[][] board = new Piece[8][8];
 
+	/**
+	 * Called once at the beginning of each chess game to put pieces in their starting positions,
+	 * and initialize other tiles on the board as null.
+	 */
 	public static void initialize() {
-		board[1][2] = new Pawn('b', 'p');
-		board[3][0] = new King('w', 'K');
-		board[3][1] = new Pawn('w', 'p');
-		board[3][5] = new Rook('b', 'R');
-		board[7][7] = new King('b', 'K');
-		board[7][6] = new Pawn('w', 'p');
-		/*
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 				if (i == 0) {
 					if (j == 0 || j == 7) {
-						board[i][j] = new Rook('b', 'R');
+						board[i][j] = new Rook('b');
 					}
 					else if (j == 1 || j == 6) {
-						board[i][j] = new Knight('b', 'N');
+						board[i][j] = new Knight('b');
 					}
 					else if (j == 2 || j == 5) {
-						board[i][j] = new Bishop('b', 'B');
+						board[i][j] = new Bishop('b');
 					}
 					else if (j == 3) {
-						board[i][j] = new Queen('b', 'Q');
+						board[i][j] = new Queen('b');
 					}
 					else if (j == 4) {
-						board[i][j] = new King('b', 'K');
+						board[i][j] = new King('b');
 					}
 				}
 				else if (i == 1) {
-					board[i][j] = new Pawn('b', 'p');
+					board[i][j] = new Pawn('b');
 				}
 				else if (i == 6) {
-					board[i][j] = new Pawn('w', 'p');
+					board[i][j] = new Pawn('w');
 				}
 				else if (i == 7) {
 					if (j == 0 || j == 7) {
-						board[i][j] = new Rook('w', 'R');
+						board[i][j] = new Rook('w');
 					}
 					else if (j == 1 || j == 6) {
-						board[i][j] = new Knight('w', 'N');
+						board[i][j] = new Knight('w');
 					}
 					else if (j == 2 || j == 5) {
-						board[i][j] = new Bishop('w', 'B');
+						board[i][j] = new Bishop('w');
 					}
 					else if (j == 3) {
-						board[i][j] = new Queen('w', 'Q');
+						board[i][j] = new Queen('w');
 					}
 					else if (j == 4) {
-						board[i][j] = new King('w', 'K');
+						board[i][j] = new King('w');
 					}
 				}
 				else {
 					board[i][j] = null;
 				}
 			}
-		}*/
-		
+		}
 	}
 
+	/**
+	 * Draws the board in the specified format. 
+	 */
 	public static void printBoard() {
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
@@ -179,27 +181,33 @@ public class Chess {
 			if (s.length() > 6) {
 				switch (s.charAt(6)) {
 					case 'R':
-						board[endRow][endCol] = new Rook(start.color, s.charAt(6));
+						board[endRow][endCol] = new Rook(start.color);
 						break;
 					case 'N':
-						board[endRow][endCol] = new Knight(start.color, s.charAt(6));
+						board[endRow][endCol] = new Knight(start.color);
 						break;
 					case 'B':
-						board[endRow][endCol] = new Bishop(start.color, s.charAt(6));
+						board[endRow][endCol] = new Bishop(start.color);
 						break;
 					case 'Q':
 					default:
-						board[endRow][endCol] = new Queen(start.color, s.charAt(6));
+						board[endRow][endCol] = new Queen(start.color);
 						break;
 				}
 			}
 			else {
-				board[endRow][endCol] = new Queen(start.color, 'Q');
+				board[endRow][endCol] = new Queen(start.color);
 			}
 		}
 		return;
 	}
 	
+	/**
+	 * Returns "true" if the King of the specified color is in checkmate, and "false" otherwise.
+	 * 
+	 * @param color		The 'color' value of the King 
+	 * @return			A boolean representing whether the King is in checkmate
+	 */
 	public static boolean isCheckmate(char color) {
 		//test possible moves to see if they end the check; if none, checkmate detected
 		for (int j = 0; j < 8; j++) {
@@ -231,7 +239,12 @@ public class Chess {
 		return true;
 	}
 
-	//given a color, check if the king is in check 
+	/**
+	 * Returns "true" if the King of the specified color is in check, and "false" otherwise.
+	 * 
+	 * @param color		The 'color' value of the King 
+	 * @return			A boolean representing whether the King is in check
+	 */
 	public static boolean isCheck(char color) {
 		//get king's position as starting point
 		int yPos = getKingPos(color)[0];
@@ -294,6 +307,15 @@ public class Chess {
 		return false;
 	}
 	
+	/**
+	 * Returns an integer array of length 2 with the position of the King of the specified color.
+	 * The first entry in the array holds the row index (0 for the first row and 7 for the last),
+	 * and the second holds the column index (0 for the first column, 7 for the last).
+	 * 
+	 * @param  color	The 'color' value of the King
+	 * @return kingPos	An integer array of 2 integers which store the row and column index of the King,
+	 * respectively, to be used in accessing the King in the 2D-array "board".
+	 */
 	public static int[] getKingPos(char color) {
 		int[] kingPos = {-1, -1};
 		for (int i = 0; i < 8; i++) {
@@ -309,8 +331,17 @@ public class Chess {
 		return kingPos;
 	}
 	
-	//given a starting tile and direction, returns an int[] representing position at which the first
-	//piece is found. if no piece is found, it will return the last position checked
+	/**
+	 * Given a starting tile on the "board" and a direction, returns an integer array with the position
+	 * of the first Piece found. If no piece is found, then the last position checked on the board is returned.
+	 * 
+	 * @param yPos		The row index (0-7) of the starting tile
+	 * @param xPos		The column index (0-7) of the starting tile
+	 * @param direction	One of the 8 directions ("NE", "E", "SE", ...) that will be searched for a Piece
+	 * @param dist		The maximum distance that will be searched in the direction
+	 * @return			An integer array storing the row and column index and the first Piece found, or 
+	 * 					the last board position checked (if no Piece is found)
+	 */
 	public static int[] searchInDirection(int yPos, int xPos, String direction, int dist) {
 		switch (direction) {
 			case "NE":
@@ -357,7 +388,16 @@ public class Chess {
 		return new int[] {yPos, xPos};
 	}
 
-	//given a piece and its location, returns a list of possible moves as {x,y} locations
+	/**
+	 * Given a piece and its location, returns a list of possible moves, stored as integer arrays.
+	 * The 2 entries in each array hold the row and column index, respectively, of the possible positions
+	 * which the Piece may move to. This method does not check if the possible moves result in a check.
+	 * 
+	 * @param p			The Piece to be checked for possible moves
+	 * @param yPos		The row index (0-7) of the starting tile of p
+	 * @param xPos		The column index (0-7) of the starting tile of p
+	 * @return			An ArrayList of integer arrays 
+	 */
 	public static ArrayList<int[]> getPossMoves(Piece p, int yPos, int xPos){
 		ArrayList<int[]> possMoves = new ArrayList<int[]>();
 		switch (p.type) {
@@ -527,6 +567,6 @@ public class Chess {
 			}
 			turn++;
 		}
-		
+		scanner.close();
 	}
 }

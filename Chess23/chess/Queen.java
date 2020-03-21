@@ -1,14 +1,12 @@
 package chess;
 
-import java.util.*;
-import java.io.*;
-
 /**
 @author Lance Luo
+@author Patrick Lee
 */
 public class Queen extends Piece {
-	Queen (char color, char type) {
-		super(color, type);
+	Queen (char color) {
+		super(color, 'Q');
 	}
 	
 	public boolean validMove(Piece[][] board, int startCol, int startRow, int endCol, int endRow, int turn) {

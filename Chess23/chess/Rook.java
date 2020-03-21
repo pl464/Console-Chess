@@ -1,16 +1,14 @@
 package chess;
 
-import java.util.*;
-import java.io.*;
-
 /**
 @author Lance Luo
+@author Patrick Lee
 */
 public class Rook extends Piece {
 	public boolean canCastle = true;
 
-	Rook (char color, char type) {
-		super(color, type);
+	Rook (char color) {
+		super(color, 'R');
 	}
 	
 	public boolean validMove(Piece[][] board, int startCol, int startRow, int endCol, int endRow, int turn) {

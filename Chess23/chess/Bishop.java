@@ -1,14 +1,13 @@
 package chess;
 
-import java.util.*;
-import java.io.*;
-
 /**
 @author Lance Luo
+@author Patrick Lee
 */
 public class Bishop extends Piece {
-	Bishop (char color, char type) {
-		super(color, type);
+	
+	Bishop (char color) {
+		super(color, 'B');
 	}
 	
 	public boolean validMove(Piece[][] board, int startCol, int startRow, int endCol, int endRow, int turn) {

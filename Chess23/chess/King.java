@@ -1,16 +1,15 @@
 package chess;
 
-import java.util.*;
-import java.io.*;
 import chess.Chess;
 /**
 @author Lance Luo
+@author Patrick Lee
 */
 public class King extends Piece {
 	public boolean canCastle = true;
 
-	King (char color, char type) {
-		super(color, type);
+	King (char color) {
+		super(color, 'K');
 	}
 	
 	public boolean validMove(Piece[][] board, int startCol, int startRow, int endCol, int endRow, int turn) {

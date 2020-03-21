@@ -1,17 +1,16 @@
 package chess;
 
-import java.util.*;
-import java.io.*;
 import chess.Chess;
 
 /**
 @author Lance Luo
+@author Patrick Lee
 */
 public class Pawn extends Piece {
 	public int passant = -1;
 
-	Pawn (char color, char type) {
-		super(color, type);
+	Pawn (char color) {
+		super(color, 'p');
 	}
 	
 	public boolean validMove(Piece[][] board, int startCol, int startRow, int endCol, int endRow, int turn) {
