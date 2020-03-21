@@ -11,6 +11,7 @@ public class Chess {
 	public static Piece[][] board = new Piece[8][8];
 
 	public static void initialize() {
+		
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 				if (i == 0) {
@@ -105,7 +106,20 @@ public class Chess {
 		if (start.validMove(board, startCol, startRow, endCol, endRow, i) == false) {
 			return true;
 		}
-
+		
+		//test to see if the move produces a check
+		Piece p0 = board[startRow][startCol];
+		Piece p1 = board[endRow][endCol];
+		board[endRow][endCol] = p0;
+		board[startRow][startCol] = null;
+		if (isCheck(c)) {
+			board[startRow][startCol] = p0;
+			board[endRow][endCol] = p1;
+			return true;
+		}
+		board[startRow][startCol] = p0;
+		board[endRow][endCol] = p1;
+		
 		return false;
 	}
 
@@ -178,24 +192,299 @@ public class Chess {
 		}
 		return;
 	}
-
-	public static boolean isCheckmate(String s, int i) {
-		//implement
-		return false;
+	
+	public static boolean isCheckmate(char color) {
+		//test possible moves to see if they end the check; if none, checkmate detected
+		for (int j = 0; j < 8; j++) {
+			for (int k = 0; k < 8; k++) {
+				Piece p0 = board[j][k]; //save the original piece before moving it
+				if (p0 == null || p0.color != color) {
+					continue;
+				}
+				ArrayList<int[]> possMoves = getPossMoves(p0, j, k);
+				//for every possible move, try the move 
+				for (int[] possMove : possMoves) {
+					int testY = possMove[0];
+					int testX = possMove[1]; 
+					Piece p1 = board[testY][testX]; //save the destination piece
+					board[testY][testX] = p0;
+					board[j][k] = null;
+					if (!isCheck(color)) {
+						board[j][k] = p0;
+						board[testY][testX] = p1;
+						return false; 
+					}
+					else {
+						board[j][k] = p0;
+						board[testY][testX] = p1;
+					}
+				}
+			}
+		}
+		return true;
 	}
 
-	public static boolean isCheck(String s, int i) {
-		//implement
+	//given a color, check if the king is in check 
+	public static boolean isCheck(char color) {
+		//get king's position as starting point
+		int yPos = getKingPos(color)[0];
+		int xPos = getKingPos(color)[1];
+		
+		//search diagonally for enemy bishops and queen
+		String[] diagDirections = {"NW", "NE", "SE", "SW"};
+		for (int i = 0; i < 4; i++) {
+			int[] position = searchInDirection(yPos, xPos, diagDirections[i], 7);
+			Piece p = board[position[0]][position[1]];
+			if (p != null && (p.type == 'B' || p.type == 'Q') && p.color != color) {
+				return true;
+			}
+		}
+		//search horizontally/vertically for enemy rooks and queen
+		String[] cardDirections = {"N", "E", "S", "W"};
+		for (int i = 0; i < 4; i++) {
+			int[] position = searchInDirection(yPos, xPos, cardDirections[i], 7);
+			Piece p = board[position[0]][position[1]];
+			if (p != null && (p.type == 'R' || p.type == 'Q') && p.color != color) {
+				return true;
+			}
+		}
+		//search for checking knights
+		int[] arr = {1, 2, -1, -2}; //array to get all tiles where checking knight can be
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) { //try each combo of 1 and 2
+				int y = yPos + arr[i]; int x = xPos + arr[j]; //add 1 or 2 to y and x
+				if ((arr[i] + arr[j]) % 2 == 0) 
+					continue; //don't try combos that aren't a 1 and 2
+				if (!(0 <= y && y <= 7 && 0 <= x && x <= 7)) 
+					continue; //checks if tile is on the board
+				if (board[y][x] == null) 
+					continue;
+				if (board[y][x].type == 'N' && board[y][x].color != color) 
+					return true;
+			}
+		}
+		//search for checking kings 
+		String[] allDirections = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
+		for (int i = 0; i < 8; i++) {
+			int[] position = searchInDirection(yPos, xPos, allDirections[i], 1);
+			Piece p = board[position[0]][position[1]]; 
+			if (p != null && (p.type == 'K') && p.color != color) {
+				return true;
+			}
+		}
+		//search for checking pawns
+		//reminder: diagDirections = {"NW", "NE", "SE", "SW"};
+		int a = 0; int b = 1;
+		if (color == 'b') { a = 2; b = 3;}
+		for (int i = a; i <= b; i++) {
+			int[] position = searchInDirection(yPos, xPos, diagDirections[i], 1);
+			Piece p = board[position[0]][position[1]];
+			if (p != null && (p.type == 'P') && p.color != color) {
+				return true;
+			}
+		} 
 		return false;
 	}
+	
+	public static int[] getKingPos(char color) {
+		int[] kingPos = {-1, -1};
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				if (board[i][j] != null &&
+						board[i][j].color == color && board[i][j].type == 'K') {
+					kingPos[0] = i; 
+					kingPos[1] = j;
+					return kingPos;
+				}
+			}
+		}
+		return kingPos;
+	}
+	
+	//given a starting tile and direction, returns an int[] representing position at which the first
+	//piece is found. if no piece is found, it will return the last position checked
+	public static int[] searchInDirection(int yPos, int xPos, String direction, int dist) {
+		switch (direction) {
+			case "NE":
+				while (yPos > 0 && xPos < 7 && dist > 0) {
+					yPos--; xPos++; dist--;
+					if (board[yPos][xPos] != null) break;
+				} break;
+			case "SE":
+				while (yPos < 7 && xPos < 7 && dist > 0) {
+					yPos++; xPos++; dist--;
+					if (board[yPos][xPos] != null) break;
+				} break;
+			case "SW":
+				while (yPos < 7 && xPos > 0 && dist > 0) {
+					yPos++; xPos--; dist--;
+					if (board[yPos][xPos] != null) break;
+				} break;
+			case "NW":
+				while (yPos > 0 && xPos > 0 && dist > 0) {
+					yPos--; xPos--; dist--;
+					if (board[yPos][xPos] != null) break;
+				} break;
+			case "N":
+				while (yPos > 0 && dist > 0) {
+					yPos--; dist--;
+					if (board[yPos][xPos] != null) break;
+				} break;
+			case "E":
+				while (xPos < 7 && dist > 0) {
+					xPos++; dist--;
+					if (board[yPos][xPos] != null) break;
+				} break;
+			case "S":
+				while (yPos < 7 && dist > 0) {
+					yPos++; dist--;
+					if (board[yPos][xPos] != null) break;
+				} break;
+			case "W":
+				while (xPos > 0 && dist > 0) {
+					xPos--; dist--;
+					if (board[yPos][xPos] != null) break;
+				} break;
+		}
+		return new int[] {yPos, xPos};
+	}
 
+	//given a piece and its location, returns a list of possible moves as {x,y} locations
+	public static ArrayList<int[]> getPossMoves(Piece p, int yPos, int xPos){
+		ArrayList<int[]> possMoves = new ArrayList<int[]>();
+		switch (p.type) {
+			case 'B':
+				String[] B_Directions = {"NW", "NE", "SE", "SW"};
+				int[][] B_Moves = {{-1, -1}, {-1, 1}, {1, 1}, {1, -1}};
+				for (int i = 0; i < 4; i++) {
+				
+					int[] position = searchInDirection(yPos, xPos, B_Directions[i], 7);
+					int tilesMoved = Math.abs(position[1] - xPos);
+					//if you found a friendly piece, don't count its location as a possible move
+					if (board[position[0]][position[1]] != null &&
+							board[position[0]][position[1]].color == p.color) {
+						tilesMoved--;
+					}
+					int y = yPos; int x = xPos;
+					for (int j = 0; j < tilesMoved; j++) {
+						y += B_Moves[i][0];
+						x += B_Moves[i][1];
+						possMoves.add(new int[] {y, x});
+					}
+				}
+				break;
+			
+			case 'R':
+				String[] R_Directions = {"N", "E", "S", "W"};
+				int[][] R_Moves = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+				for (int i = 0; i < 4; i++) {
+					int[] position = searchInDirection(yPos, xPos, R_Directions[i], 7);
+					int tilesMoved = Math.abs((position[0] - yPos) + (position[1] - xPos));
+					
+					if (board[position[0]][position[1]] != null &&
+							board[position[0]][position[1]].color == p.color) tilesMoved--;
+					//System.out.println("In direction " + R_Directions[i] + ", moved " + tilesMoved + " times");
+					int y = yPos; int x = xPos;
+					for (int j = 0; j < tilesMoved; j++) {
+						y += R_Moves[i][0];
+						x += R_Moves[i][1];
+						possMoves.add(new int[] {y, x});
+					}
+				}
+				break;
+			
+			case 'Q':
+				String[] Q_Directions = {"NW", "NE", "SE", "SW", "N", "E", "S", "W"};
+				int[][] Q_Moves = {{-1, -1}, {-1, 1}, {1, 1}, {1, -1}, {-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+				for (int i = 0; i < 8; i++) {
+					
+					int[] position = searchInDirection(yPos, xPos, Q_Directions[i], 7);
+					int tilesMoved = Math.abs(position[0] - yPos);
+					if (tilesMoved == 0) tilesMoved += Math.abs(position[1] - xPos);
+					//if you found a friendly piece, don't count its location as a possible move
+					if (board[position[0]][position[1]] != null &&
+							board[position[0]][position[1]].color == p.color) {
+						tilesMoved--;
+					}
+					int y = yPos; int x = xPos;
+					for (int j = 0; j < tilesMoved; j++) {
+						y += Q_Moves[i][0];
+						x += Q_Moves[i][1];
+						possMoves.add(new int[] {y, x});
+					}
+				}
+				break;
+			
+			case 'N':
+				int[] arr = {1, 2, -1, -2}; //array to get all tiles where checking knight can be
+				for (int i = 0; i < 4; i++) {
+					for (int j = 0; j < 4; j++) { //try each combo of 1 and 2
+						int y = yPos + arr[i]; int x = xPos + arr[j]; //add 1 or 2 to y and x
+						if ((arr[i] + arr[j]) % 2 == 0) 
+							continue; //don't try combos that aren't a 1 and 2
+						if (!(0 <= y && y <= 7 && 0 <= x && x <= 7)) 
+							continue; //checks if tile is on the board
+						if (board[y][x] == null) {
+							possMoves.add(new int[] {y, x});
+							continue;}
+						if (board[y][x].color != p.color) {
+							possMoves.add(new int[] {y, x});
+							continue;}
+					}
+				}
+				break;
+			
+			case 'K':
+				String[] K_Directions = {"NW", "NE", "SE", "SW", "N", "E", "S", "W"};
+				int[][] K_Moves = {{-1, -1}, {-1, 1}, {1, 1}, {1, -1}, {-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+				for (int i = 0; i < 8; i++) {
+					int[] position = searchInDirection(yPos, xPos, K_Directions[i], 1);
+					int tilesMoved = Math.abs(position[0] - yPos);
+					if (tilesMoved == 0) tilesMoved += Math.abs(position[1] - xPos);
+					if (board[position[0]][position[1]] != null &&
+							board[position[0]][position[1]].color == p.color) {
+						tilesMoved--;
+					}
+					int y = yPos; int x = xPos;
+					if (tilesMoved > 0) {
+						y += K_Moves[i][0];
+						x += K_Moves[i][1];
+						possMoves.add(new int[] {y, x});
+					}
+				}
+				break;
+				
+			case 'p':
+				int y; int x = xPos;
+				if (p.color == 'b') {
+					y = yPos + 1; if (y <= 7 && board[y][x] == null) possMoves.add(new int[] {y, xPos});
+					if (yPos == 1) possMoves.add(new int[] {3, xPos});
+				} else {
+					y = yPos - 1; if (y >= 0 && board[y][x] == null) possMoves.add(new int[] {y, xPos});
+					if (yPos == 6) possMoves.add(new int[] {4, xPos});
+				}
+				if (x != 7) {
+					x = xPos + 1; 
+					if (board[y][x] != null && board[y][x].color != p.color) 
+						possMoves.add(new int[] {y, x});
+				} 
+				if (x != 0) {
+					x = xPos - 1; 
+					if (board[y][x] != null && board[y][x].color != p.color) 
+						possMoves.add(new int[] {y, x});
+				}
+				break;
+		} 
+		return possMoves;
+	}
+	
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
 		String move;
 		int turn = 1;
 		initialize();
 		printBoard();
-
+		
 		while (true) {
 			System.out.print(((turn % 2 == 1) ? "White" : "Black") + "'s move: ");
 			move = scanner.nextLine();
@@ -218,8 +507,8 @@ public class Chess {
 			printBoard();
 
 			//check if game over after move
-			if (isCheck(move, turn)) {
-				if (isCheckmate(move, turn)) {
+			if (isCheck((turn % 2 == 1) ? 'b' : 'w')) { //if black just moved, check wK
+				if (isCheckmate((turn % 2 == 1) ? 'b' : 'w')) {
 					System.out.println("Checkmate\n");
 					System.out.print(((turn % 2 == 1) ? "White" : "Black") + " wins");
 					break;
@@ -230,5 +519,6 @@ public class Chess {
 			}
 			turn++;
 		}
+		
 	}
 }

@@ -2,7 +2,7 @@ package chess;
 
 import java.util.*;
 import java.io.*;
-
+import chess.Chess;
 /**
 @author Lance Luo
 */
@@ -27,10 +27,23 @@ public class King extends Piece {
 			return true;
 		}
 		if (canCastle && Math.abs(xDist) == 2 && Math.abs(yDist) == 0) {
+			if (Chess.isCheck(this.color)) {
+				return false;
+			}
 			if (corner != null && corner.type == 'R' && ((Rook) corner).canCastle) {
 				for (int i = 1; i < Math.abs(rookCol - startCol); i++) {
 					if (board[startRow][startCol + (xDir * i)] != null) {
 						return false;
+					} else { //test if a check will result along the way
+						board[startRow][startCol + (xDir * i)] = this;
+						board[startRow][startCol] = null;
+						if (Chess.isCheck(this.color)) {
+							board[startRow][startCol] = this;
+							board[startRow][startCol + (xDir * i)] = null;
+							return false;
+						}
+						board[startRow][startCol] = this;
+						board[startRow][startCol + (xDir * i)] = null;
 					}
 				}
 				return true;
