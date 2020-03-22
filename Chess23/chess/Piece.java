@@ -10,9 +10,13 @@ import java.io.*;
 */
 public abstract class Piece {
 	/**
-	* Characters to track the color and type of this piece.
+	* Character to track whether this piece is white or black.
 	*/
-	public char color, type;
+	public char color;
+	/**
+	* Character to track whether this piece is a bishop, king, knight, pawn, queen, or rook.
+	*/
+	public char type;
 
 	/**
 	* Constructor for a chess piece.
