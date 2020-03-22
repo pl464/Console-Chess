@@ -1,13 +1,14 @@
 package chess;
 
 import java.util.*;
+import java.io.*;
 
 /**
-@author Lance Luo
-@author Patrick Lee
+* @author Lance Luo
+* @author Patrick Lee
+* Class to represent a chess game.
 */
 public class Chess {
-
 	/**
 	 * This is a 2D-array that acts as the "chess board".
 	 */
@@ -86,6 +87,12 @@ public class Chess {
 		System.out.println(" a  b  c  d  e  f  g  h\n");
 	}
 
+	/**
+	* Method to determine whether a move is illegal.
+	* @param s The move entered by the user in chess notation.
+	* @param i Odd number means white's turn, even number means black's turn.
+	* @return Returns true if the move is valid, false if the move is invalid.
+	*/
 	public static boolean isIllegal(String s, int i) {
 		//parse user input
 		int startCol = s.toLowerCase().charAt(0) - 97;
@@ -117,21 +124,23 @@ public class Chess {
 		}
 		
 		//test to see if the move produces a check
-		Piece p0 = board[startRow][startCol];
-		Piece p1 = board[endRow][endCol];
-		board[endRow][endCol] = p0;
+		board[endRow][endCol] = start;
 		board[startRow][startCol] = null;
 		if (isCheck(c)) {
-			board[startRow][startCol] = p0;
-			board[endRow][endCol] = p1;
+			board[startRow][startCol] = start;
+			board[endRow][endCol] = end;
 			return true;
 		}
-		board[startRow][startCol] = p0;
-		board[endRow][endCol] = p1;
-		
+		board[startRow][startCol] = start;
+		board[endRow][endCol] = end;
 		return false;
 	}
 
+	/**
+	* Method to make a move on the chessboard.
+	* @param s The move entered by the user in chess notation.
+	* @param i Odd number means white's turn, even number means black's turn.
+	*/
 	public static void makeMove(String s, int i) {
 		//parse user input
 		int startCol = s.toLowerCase().charAt(0) - 97;
@@ -141,7 +150,7 @@ public class Chess {
 		Piece start = board[startRow][startCol];
 		Piece end = board[endRow][endCol];
 
-		//move
+		//move the piece
 		board[endRow][endCol] = start;
 		board[startRow][startCol] = null;
 
@@ -203,11 +212,10 @@ public class Chess {
 	}
 	
 	/**
-	 * Returns "true" if the King of the specified color is in checkmate, and "false" otherwise.
-	 * 
-	 * @param color		The 'color' value of the King 
-	 * @return			A boolean representing whether the King is in checkmate
-	 */
+	* Method to determine whether the specified king is in checkmate.
+	* @param color The color of the king under consideration.
+	* @return Returns true if the king is checkmated, false otherwise.
+	*/
 	public static boolean isCheckmate(char color) {
 		//test possible moves to see if they end the check; if none, checkmate detected
 		for (int j = 0; j < 8; j++) {
@@ -240,11 +248,10 @@ public class Chess {
 	}
 
 	/**
-	 * Returns "true" if the King of the specified color is in check, and "false" otherwise.
-	 * 
-	 * @param color		The 'color' value of the King 
-	 * @return			A boolean representing whether the King is in check
-	 */
+	* Method to determine whether the specified king is in check.
+	* @param color The color of the king under consideration.
+	* @return Returns true if the king is in check, false otherwise.
+	*/
 	public static boolean isCheck(char color) {
 		//get king's position as starting point
 		int yPos = getKingPos(color)[0];
@@ -312,8 +319,8 @@ public class Chess {
 	 * The first entry in the array holds the row index (0 for the first row and 7 for the last),
 	 * and the second holds the column index (0 for the first column, 7 for the last).
 	 * 
-	 * @param  color	The 'color' value of the King
-	 * @return kingPos	An integer array of 2 integers which store the row and column index of the King,
+	 * @param color The color of the king under consideration.
+	 * @return Returns an integer array of 2 integers which store the row and column index of the King,
 	 * respectively, to be used in accessing the King in the 2D-array "board".
 	 */
 	public static int[] getKingPos(char color) {
@@ -335,12 +342,12 @@ public class Chess {
 	 * Given a starting tile on the "board" and a direction, returns an integer array with the position
 	 * of the first Piece found. If no piece is found, then the last position checked on the board is returned.
 	 * 
-	 * @param yPos		The row index (0-7) of the starting tile
-	 * @param xPos		The column index (0-7) of the starting tile
-	 * @param direction	One of the 8 directions ("NE", "E", "SE", ...) that will be searched for a Piece
-	 * @param dist		The maximum distance that will be searched in the direction
-	 * @return			An integer array storing the row and column index and the first Piece found, or 
-	 * 					the last board position checked (if no Piece is found)
+	 * @param yPos The row index (0-7) of the starting tile.
+	 * @param xPos The column index (0-7) of the starting tile.
+	 * @param direction One of the 8 directions ("NE", "E", "SE", ...) that will be searched for a Piece.
+	 * @param dist The maximum distance that will be searched in the direction.
+	 * @return Returns an integer array storing the row and column index and the first Piece found, or 
+	 * the last board position checked (if no Piece is found).
 	 */
 	public static int[] searchInDirection(int yPos, int xPos, String direction, int dist) {
 		switch (direction) {
@@ -393,10 +400,10 @@ public class Chess {
 	 * The 2 entries in each array hold the row and column index, respectively, of the possible positions
 	 * which the Piece may move to. This method does not check if the possible moves result in a check.
 	 * 
-	 * @param p			The Piece to be checked for possible moves
-	 * @param yPos		The row index (0-7) of the starting tile of p
-	 * @param xPos		The column index (0-7) of the starting tile of p
-	 * @return			An ArrayList of integer arrays 
+	 * @param p The Piece to be checked for possible moves.
+	 * @param yPos The row index (0-7) of the starting tile of p.
+	 * @param xPos The column index (0-7) of the starting tile of p.
+	 * @return Returns an ArrayList of integer arrays.
 	 */
 	public static ArrayList<int[]> getPossMoves(Piece p, int yPos, int xPos){
 		ArrayList<int[]> possMoves = new ArrayList<int[]>();
@@ -526,6 +533,10 @@ public class Chess {
 		return possMoves;
 	}
 	
+	/**
+	* Method to play a chess game.
+	* @param args No command-line arguments.
+	*/
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
 		String move;
@@ -534,6 +545,7 @@ public class Chess {
 		printBoard();
 		
 		while (true) {
+			//get user input
 			System.out.print(((turn % 2 == 1) ? "White" : "Black") + "'s move: ");
 			move = scanner.nextLine();
 
@@ -547,6 +559,7 @@ public class Chess {
 				break;
 			}
 
+			//move the piece if allowed and show the updated chessboard
 			if (isIllegal(move, turn)) {
 				System.out.println("Illegal move, try again\n");
 				continue;
@@ -555,7 +568,7 @@ public class Chess {
 			printBoard();
 
 			//check if game over after move
-			if (isCheck((turn % 2 == 1) ? 'b' : 'w')) { //if black just moved, check wK
+			if (isCheck((turn % 2 == 1) ? 'b' : 'w')) {
 				if (isCheckmate((turn % 2 == 1) ? 'b' : 'w')) {
 					System.out.println("Checkmate\n");
 					System.out.print(((turn % 2 == 1) ? "White" : "Black") + " wins");
