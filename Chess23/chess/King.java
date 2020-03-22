@@ -19,7 +19,7 @@ public class King extends Piece {
 	* @param color Sets the piece as white or black.
 	* @param type Sets the piece as a king.
 	*/
-	King (char color, char type) {
+	King (char color) {
 		super(color, 'K');
 	}
 
