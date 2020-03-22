@@ -1,17 +1,38 @@
 package chess;
 
-import chess.Chess;
+import java.util.*;
+import java.io.*;
+
 /**
-@author Lance Luo
-@author Patrick Lee
+* @author Lance Luo
+* @author Patrick Lee
+* Class to represent a king piece.
 */
 public class King extends Piece {
+	/**
+	* Boolean to track whether this king has been moved yet.
+	*/
 	public boolean canCastle = true;
 
-	King (char color) {
+	/**
+	* Constructor for a king piece.
+	* @param color Sets the piece as white or black.
+	* @param type Sets the piece as a king.
+	*/
+	King (char color, char type) {
 		super(color, 'K');
 	}
-	
+
+	/**
+	* Method to determine whether a move is valid for a king.
+	* @param board 2D array that represents the chessboard.
+	* @param startCol Column where the piece starts.
+	* @param startRow Row where the piece starts.
+	* @param endCol Column where the piece ends.
+	* @param endRow Row where the piece ends.
+	* @param turn Odd number means white's turn, even number means black's turn.
+	* @return Returns true if the move is valid, false if the move is invalid.
+	*/
 	public boolean validMove(Piece[][] board, int startCol, int startRow, int endCol, int endRow, int turn) {
 		int xDist = endCol - startCol;
 		int yDist = endRow - startRow;
@@ -25,6 +46,7 @@ public class King extends Piece {
 		if (Math.abs(xDist) <= 1 && Math.abs(yDist) <= 1) {
 			return true;
 		}
+		//castling
 		if (canCastle && Math.abs(xDist) == 2 && Math.abs(yDist) == 0) {
 			if (Chess.isCheck(this.color)) {
 				return false;
@@ -33,7 +55,8 @@ public class King extends Piece {
 				for (int i = 1; i < Math.abs(rookCol - startCol); i++) {
 					if (board[startRow][startCol + (xDir * i)] != null) {
 						return false;
-					} else { //test if a check will result along the way
+					}
+					else {
 						board[startRow][startCol + (xDir * i)] = this;
 						board[startRow][startCol] = null;
 						if (Chess.isCheck(this.color)) {
