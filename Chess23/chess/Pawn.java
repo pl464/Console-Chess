@@ -10,7 +10,7 @@ import java.io.*;
 */
 public class Pawn extends Piece {
 	/**
-	* Boolean to track the turn this pawn has advanced two squares.
+	* Integer to track the turn this pawn has advanced two squares.
 	*/
 	public int passant = -1;
 
