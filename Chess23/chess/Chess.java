@@ -506,10 +506,10 @@ public class Chess {
 				int y; int x = xPos;
 				if (p.color == 'b') {
 					y = yPos + 1; if (y <= 7 && board[y][x] == null) possMoves.add(new int[] {y, xPos});
-					if (yPos == 1) possMoves.add(new int[] {3, xPos});
+					if (yPos == 1 && board[3][xPos] == null) possMoves.add(new int[] {3, xPos});
 				} else {
 					y = yPos - 1; if (y >= 0 && board[y][x] == null) possMoves.add(new int[] {y, xPos});
-					if (yPos == 6) possMoves.add(new int[] {4, xPos});
+					if (yPos == 6 && board[4][xPos] == null) possMoves.add(new int[] {4, xPos});
 				}
 				if (x != 7) {
 					x = xPos + 1; 
