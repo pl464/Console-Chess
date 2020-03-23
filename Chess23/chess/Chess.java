@@ -19,11 +19,7 @@ public class Chess {
 	 * and initialize other tiles on the board as null.
 	 */
 	public static void initialize() {
-		board[0][2] = new King('b');
-		board[1][3] = new Rook('w');
-		board[2][2] = new Bishop('w');
-		board[7][7] = new King('w');
-		/*
+		
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 				if (i == 0) {
@@ -71,7 +67,7 @@ public class Chess {
 				}
 			}
 		}
-		*/
+		
 	}
 
 	/**
