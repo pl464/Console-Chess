@@ -19,6 +19,11 @@ public class Chess {
 	 * and initialize other tiles on the board as null.
 	 */
 	public static void initialize() {
+		board[0][2] = new King('b');
+		board[1][3] = new Rook('w');
+		board[2][2] = new Bishop('w');
+		board[7][7] = new King('w');
+		/*
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 				if (i == 0) {
@@ -66,6 +71,7 @@ public class Chess {
 				}
 			}
 		}
+		*/
 	}
 
 	/**
@@ -577,6 +583,8 @@ public class Chess {
 				else {
 					System.out.println("Check\n");
 				}
+			} else if (isCheckmate((turn % 2 == 1) ? 'w' : 'b')){
+				break; //if the next player has no valid move, but is not in check, it's a draw
 			}
 			turn++;
 		}
