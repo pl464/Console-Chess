@@ -548,7 +548,7 @@ public class Chess {
 		
 		while (true) {
 			//check if the player has no valid moves
-			if (isCheckmate((turn % 2 == 1) ? 'b' : 'w')) {
+			if (isCheckmate((turn % 2 == 1) ? 'w' : 'b')) {
 				System.out.println("draw");
 				break;
 			}
@@ -584,7 +584,7 @@ public class Chess {
 				else {
 					System.out.println("Check\n");
 				}
-			}
+			} 
 			turn++;
 		}
 		scanner.close();
