@@ -547,6 +547,11 @@ public class Chess {
 		printBoard();
 		
 		while (true) {
+			//check if the player has no valid moves
+			if (isCheckmate((turn % 2 == 1) ? 'b' : 'w')) {
+				System.out.println("draw");
+				break;
+			}
 			//get user input
 			System.out.print(((turn % 2 == 1) ? "White" : "Black") + "'s move: ");
 			move = scanner.nextLine();
@@ -579,7 +584,8 @@ public class Chess {
 				else {
 					System.out.println("Check\n");
 				}
-			} else if (isCheckmate((turn % 2 == 1) ? 'w' : 'b')){
+			} else if (isCheckmate((turn % 2 == 1) ? 'b' : 'w')){
+				System.out.println("draw");
 				break; //if the next player has no valid move, but is not in check, it's a draw
 			}
 			turn++;
