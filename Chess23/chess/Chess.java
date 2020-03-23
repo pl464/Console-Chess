@@ -584,9 +584,6 @@ public class Chess {
 				else {
 					System.out.println("Check\n");
 				}
-			} else if (isCheckmate((turn % 2 == 1) ? 'b' : 'w')){
-				System.out.println("draw");
-				break; //if the next player has no valid move, but is not in check, it's a draw
 			}
 			turn++;
 		}
